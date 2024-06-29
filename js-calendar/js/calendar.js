@@ -62,24 +62,27 @@ function createCalendar() {
     $("#calendar")
         .addClass("calendar")
         .append(
-            $("<div id='calendar-header' class='calendar__header'></div>").append(
-                $("<button class='calendar__prev' onclick='prevOnClick()'></button>"),
+            $("<div id='calendar__header' class='calendar__header'></div>").append(
+                $("<button class='calendar__prev' onclick='prevOnClick()'></button>")
+                    .append("<img src='../assets/svg/cursor-left.svg' alt='previous month' />"),
                 $("<div></div>")
                     .append(
                         $(`<span class='calendar__month'>${MONTHS[date.getMonth()]}</span>`),
                         $(`<span class='calendar__year'>${date.getFullYear()}</span>`)
                     ),
                 $("<button class='calendar__next' onclick='nextOnClick()'></button>")
+                    .append("<img src='../assets/svg/cursor-right.svg' alt='next month'/>")
             )
         )
         .append(
-            $("<div id='calendar-body' class='calendar__body'></div>")
+            $("<div id='calendar__body' class='calendar__body'></div>")
+                // .append($("<div id='calendar-day-of-week' class='calendar__day_of_week'></div>"))
         )
 
     /* Populate the body of the calendar */
 
     for (const dayOfWeek of DAYS) {
-        $("#calendar-body").append($(`<div class="calendar__day_header">${dayOfWeek}</div>`));
+        $("#calendar__body").append($(`<div class="calendar__day_of_week">${dayOfWeek}</div>`));
     }
 
     const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -87,11 +90,11 @@ function createCalendar() {
     const endDaysToPad = 7 - new Date(date.getFullYear(), date.getMonth(), daysInMonth).getDay() - 1;
 
     for (let i = 0; i < startDaysToPad; i++) {
-        $("#calendar-body").append("<div class='calendar__day_empty'></div>");
+        $("#calendar__body").append("<div class='calendar__day_empty'></div>");
     }
 
     for (let i = 1; i <= daysInMonth; i++) {
-        $("#calendar-body").append(
+        $("#calendar__body").append(
             $(`<div id='${i}' class='calendar__day'></div>`).append(
                 $(`<h2 class='calendar__date_header'>${i}</h2>`)
             )
@@ -103,7 +106,7 @@ function createCalendar() {
     }
 
     for (let i = 0; i < endDaysToPad; i++) {
-        $("#calendar-body").append("<div class='calendar__day_empty'></div>");
+        $("#calendar__body").append("<div class='calendar__day_empty'></div>");
     }
 
     /* Add events to calendar */
