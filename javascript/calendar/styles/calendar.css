@@ -77,19 +77,27 @@
     content: '  ';
 }
 
-.calendar__body {
+.calendar__day_of_week {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: 24px;
-    grid-auto-rows: 1fr;
-    height: 90%;
+    height: 3%;
+    min-height: 19px;
 }
 
-.calendar__day_of_week {
+.calendar__day_of_week_text {
     font-size: 1rem;
     font-weight: bold;
     margin: 4px;
-    height: auto;
+    display: flex;
+    align-items: flex-end;
+}
+
+.calendar__body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: 1fr;
+    box-sizing: border-box;
+    height: calc(89% - 12px); /* px from calendar__header.margin-bottom */
 }
 
 .calendar__date_header {
@@ -107,7 +115,6 @@
 .calendar__day {
     background-color: var(--calendar-primary);
     border-radius: 4px;
-    box-sizing: border-box;
     margin: 4px;
     padding: 4px;
     white-space: nowrap;

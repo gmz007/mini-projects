@@ -46,48 +46,74 @@ const EVENTS = [
     }
 ];
 
+let date;
+
 function prevOnClick() {
-    console.log("prev clicked");
+    date = new Date(date.setMonth(date.getMonth() - 1));
+    updateCalendar()
 }
 
 function nextOnClick() {
-    console.log("next clicked");
+    date = new Date(date.setMonth(date.getMonth() + 1));
+    updateCalendar()
+}
+
+function updateCalendar() {
+    $("#calendar__month").html(MONTHS[date.getMonth()]);
+    $("#calendar__year").html(date.getFullYear());
+
+    $("#calendar__body").empty();
+    const [startDaysToPad, daysInMonth, endDaysToPad] = calculateMonth(date);
+    populateCalendarBody(startDaysToPad, daysInMonth, endDaysToPad);
 }
 
 function createCalendar() {
-
-    const date = new Date();
-
     // Add calendar header and empty body.
     $("#calendar")
         .addClass("calendar")
         .append(
             $("<div id='calendar__header' class='calendar__header'></div>").append(
                 $("<button class='calendar__prev' onclick='prevOnClick()'></button>")
-                    .append("<img src='../assets/svg/cursor-left.svg' alt='previous month' />"),
+                    .append("<img src='/assets/svg/cursor-left.svg' alt='previous month' />"),
                 $("<div></div>")
                     .append(
-                        $(`<span class='calendar__month'>${MONTHS[date.getMonth()]}</span>`),
-                        $(`<span class='calendar__year'>${date.getFullYear()}</span>`)
+                        $(`<span id='calendar__month' class='calendar__month'>${MONTHS[date.getMonth()]}</span>`),
+                        $(`<span id='calendar__year' class='calendar__year'>${date.getFullYear()}</span>`)
                     ),
                 $("<button class='calendar__next' onclick='nextOnClick()'></button>")
-                    .append("<img src='../assets/svg/cursor-right.svg' alt='next month'/>")
+                    .append("<img src='/assets/svg/cursor-right.svg' alt='next month'/>")
             )
         )
         .append(
+            $("<div id='calendar__day_of_week' class='calendar__day_of_week'></div>")
+        )
+        .append(
             $("<div id='calendar__body' class='calendar__body'></div>")
-                // .append($("<div id='calendar-day-of-week' class='calendar__day_of_week'></div>"))
         )
 
     /* Populate the body of the calendar */
 
     for (const dayOfWeek of DAYS) {
-        $("#calendar__body").append($(`<div class="calendar__day_of_week">${dayOfWeek}</div>`));
+        $("#calendar__day_of_week").append($(`<div class="calendar__day_of_week_text">${dayOfWeek}</div>`));
     }
 
+    const [startDaysToPad, daysInMonth, endDaysToPad] = calculateMonth(date);
+    populateCalendarBody(startDaysToPad, daysInMonth, endDaysToPad);
+}
+
+function calculateMonth(date) {
     const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-    const startDaysToPad = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-    const endDaysToPad = 7 - new Date(date.getFullYear(), date.getMonth(), daysInMonth).getDay() - 1;
+
+    return [
+        new Date(date.getFullYear(), date.getMonth(), 1).getDay(),
+        daysInMonth,
+        7 - new Date(date.getFullYear(), date.getMonth(), daysInMonth).getDay() - 1
+    ];
+}
+
+function populateCalendarBody(startDaysToPad, daysInMonth, endDaysToPad) {
+
+    const currentDate = new Date();
 
     for (let i = 0; i < startDaysToPad; i++) {
         $("#calendar__body").append("<div class='calendar__day_empty'></div>");
@@ -100,7 +126,9 @@ function createCalendar() {
             )
         );
 
-        if (i === date.getDate()) {
+        if (date.getFullYear() === currentDate.getFullYear() &&
+            date.getMonth() === currentDate.getMonth() &&
+            i === currentDate.getDate()) {
             $(`#${i}`).addClass("calendar__current_date")
         }
     }
@@ -111,14 +139,19 @@ function createCalendar() {
 
     /* Add events to calendar */
 
-    for (let event of EVENTS) {
-        if (event.date.getMonth() !== date.getMonth() + 1)
-            continue;
+    const eventsInMonth = EVENTS.filter(e =>
+        e.date.getFullYear() === date.getFullYear() && e.date.getMonth() === date.getMonth()
+    );
 
+    for (let event of eventsInMonth) {
         $(`#${event.date.getDate()}`).append(
             $(`<span class='calendar__event'>${event.name}</span>`)
         );
     }
 }
 
-$(document).ready(createCalendar);
+$(document).ready(
+    () => {
+        date = new Date();
+        createCalendar();
+    });
