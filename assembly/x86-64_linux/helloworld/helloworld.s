@@ -1,5 +1,5 @@
 section .data
-	msg: db 'Hello, World!', 10	; db -> declare bytes <string>, 10 (10 is newline)
+	msg: db 'Hello, World!', 10	; db -> declare bytes '<string>', 10 (10 is newline)
 
 section .text
 
@@ -13,6 +13,6 @@ section .text
 		syscall
 
 		mov rax, 60	; exit
-		mov rdi, 255
+		mov rdi, 0
 		syscall
 
